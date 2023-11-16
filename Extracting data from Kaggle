@@ -1,0 +1,35 @@
+# Extracting data to your S3 bucket using EC2 virtual machine
+
+# Method 1 - Brute force download data onto EC2 machine
+
+First acquire your Kaggle API credentials and put them into the kaggle.json file
+
+- Set up Kaggle API credentials within your EC2 environment
+
+CMD Line code:
+mkdir -p ~/.kaggle
+cd /home/ec2-user
+mv kaggle.json ~/.kaggle/
+chmod 600 ~/.kaggle/kaggle.json
+
+- Increase EC2 instance memory 
+Manually increase total available memory in AWS dashboard.
+Then make that memoery accessible
+
+CMD code:
+sudo growpart /dev/xvda 1
+sudo xfs_growfs -d /
+
+- Download the data
+
+CMD code:
+kaggle datasets download -d viktoriiashkurenko/278k-spotify-songs --unzip
+
+This took around 20 - 40 minutes
+
+- Move downloaded files to your s3 bucket
+aws s3 cp /home/ec2-user/.kaggle/spotify_data s3://kagglespotify6k/landing/ --recursive
+
+This took about 2 hours
+
+
